@@ -1,0 +1,62 @@
+#---------------
+#spring:
+#  application:
+#    name: vendorrag
+#  ai:
+#    anthropic:
+#      api-key: 
+#      chat:
+#         model: claude-3-5-sonnet-latest
+#    openai:
+#      api-key: 
+#      embedding:
+#         model: gpt-4o-mini
+#    vectorstore:
+#      neo4j:
+#        label: DocumentChunk
+#        embedding-dimension: 1536
+#        index-name: travel_doc_embeddings
+#server:
+#  port: 8094
+#logging:
+#  level:
+#    com.bth.vendorrag: INFO
+#---------------------------------
+
+spring:
+  application:
+    name: vendorrag # Microservice identifier used in logs and service discovery
+
+  ai:
+    model:
+      chat: openai # Defines OpenAI as the default chat provider for the application
+
+    openai:
+      api-key:  # Loaded from system environment variables for security
+      chat:
+        model: gpt-4o-mini # Default LLM for generating conversational responses
+      embedding:
+        model: text-embedding-3-small # Text embedding model used to vectorize documents
+
+    anthropic:
+      api-key: # Loaded from system environment variables
+      chat:
+        options:
+          model-id: claude-3-5-sonnet-latest  # Secondary high-capability LLM option
+
+    vectorstore:
+      neo4j:
+        label: DocumentChunk # Graph node label assigned to parsed text snippets
+        embedding-dimension: 1536 # Vector size (matches text-embedding-3-small specifications)
+        index-name: travel_doc_embeddings # Vector index identifier inside the Neo4j database
+vendorrag:
+  ingestion:
+    fallback-on-rate-limit: true # Use a stub TravelExtraction on OpenAI 429s (testing Neo4j insert/read)		
+# Network Configuration
+server:
+  port: 8094 # Custom port to avoid standard 8080 conflicts
+
+# Application Logging Settings
+logging:
+  level:
+    com.bth.vendorrag: INFO # Sets default log visibility for root project package
